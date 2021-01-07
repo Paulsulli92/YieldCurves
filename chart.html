@@ -1,0 +1,73 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Highcharts With data labels chart</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            function makeChart(data) {
+                var chartype={
+                    height: 800,
+                    type: 'line'
+                }
+                var chartitle= {
+                    text: 'Yield Curves',
+                    x: -20 //center
+                }
+                var chartsubtitle = {
+                    text: 'data.treasury.gov',
+                    x: -20
+                }
+                var chartxaxis =  {
+                    categories: ['1M', '2M', '3M', '6M', '1Y', '2Y', '3Y', '5Y', '7Y', '10Y', '20Y', '30Y']
+                }
+                var chartyaxis = {
+                    title: {
+                        text: 'Yields'
+                    }
+                }
+                var charplotoptions = {
+                    line: {
+                        dataLabels: {
+                            enabled: true
+                        },
+                        enableMouseTracking: false
+                    }
+                }
+
+                $('#container').highcharts({
+                    chart:chartype,
+                    title: chartitle,
+                    subtitle: chartsubtitle,
+                    xAxis:chartxaxis,
+                    yAxis: chartyaxis,
+                    plotOptions: charplotoptions,
+                    series: data,
+                    tooltip: {
+                        shared: true,
+                        crosshairs: true
+                    },
+                });
+            };
+
+            $(document).ready(function() {
+                $.ajax({
+                url: 'https://API_ID.execute-api.us-west-1.amazonaws.com/default/yieldCurves',
+                type: 'GET',
+                async: true,
+                dataType: "json",
+                success: function (data) {
+                    console.log(data)
+                    makeChart(data);
+                }
+                });
+            });
+        });
+    </script>
+
+</head>
+<body>
+    <div id="container" style="min-width: 310px; height: 800px; margin: 0 auto"></div>
+</body>
+</html>
