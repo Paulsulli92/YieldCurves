@@ -12,7 +12,6 @@ class YieldData(object):
 
     
     def pullData(self, url):
-        # Query the 
         response = requests.get(url, stream=True)
         tree = ET.ElementTree(ET.fromstring(response.content))
         root = tree.getroot()
@@ -62,7 +61,9 @@ class YieldData(object):
             ['Last Month'] + self.getDate(now - timedelta(days=30)),
             ['Three Months'] + self.getDate(now - timedelta(days=90)),
             ['Six Months'] + self.getDate(now - timedelta(days=182)),
-            ['Last year'] + self.getDate(now - timedelta(days=365)),
+            ['Nine Months'] + self.getDate(now - timedelta(days=270)),
+            ['Twelve Months'] + self.getDate(now - timedelta(days=365)),
+            ['Fifteen Months'] + self.getDate(now - timedelta(days=455)),
         ]
         return curves
 
@@ -76,6 +77,7 @@ def lambda_handler(event, context):
     year = datetime.today().year
     y = YieldData()
     #y.pullData('http://data.treasury.gov/feed.svc/DailyTreasuryYieldCurveRateData?$filter=year(NEW_DATE)%20eq%202018')
+    y.pullData(f'http://data.treasury.gov/feed.svc/DailyTreasuryYieldCurveRateData?$filter=year(NEW_DATE)%20eq%20{year-2}')
     y.pullData(f'http://data.treasury.gov/feed.svc/DailyTreasuryYieldCurveRateData?$filter=year(NEW_DATE)%20eq%20{year-1}')
     y.pullData(f'http://data.treasury.gov/feed.svc/DailyTreasuryYieldCurveRateData?$filter=year(NEW_DATE)%20eq%20{year}')
     curves = y.queryData()
